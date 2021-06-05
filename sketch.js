@@ -55,6 +55,7 @@ function setup() {
   noFill();
 
   loadGazeFilter();
+  pogSmooth = [-1,-1];
 
   gazeSmoothNum = 15;
   fixTest = false;
@@ -65,8 +66,8 @@ function setup() {
   nofixFix = false;
   nofixNofix = false;
   nofixTestLength = 120 * 1000;
-  nofixFixLength = 10 * 1000;
-  nofixNofixLength = 5 * 1000;
+  nofixFixLength = 5 * 1000;
+  nofixNofixLength = 10 * 1000;
   nofixTarget = [width * 0.5, height * 0.5];
 }
 
@@ -98,6 +99,10 @@ function draw() {
 
 
 //tracking
+function calcPogSmooth(){
+  pogSmooth = mean(pogs.slice(-gazeSmoothNum));
+}
+
 function showPredictions() {
   if (bestGazeP != undefined) {
     stroke(1, 1, 1);
@@ -107,7 +112,6 @@ function showPredictions() {
   }
 
   if (gazeSmoothNum < pogs.length) {
-    pogSmooth = mean(pogs.slice(-gazeSmoothNum));
     stroke(1, 1, 1, 0.1);
     ellipse(pogSmooth[0], pogSmooth[1], 20, 20);
     stroke(0.333, 1, 1, 0.1);
@@ -239,7 +243,10 @@ function doNofixTest() {
   }
   else if (nofixNofix) {
     var prog = (millis() - nofixTestStart) / nofixTestLength;
-    nofixTarget = [width * 0.5 + cos(2 * TAU * prog) * prog * width * 0.5, height * 0.5 + sin(2 * TAU * prog) * prog * width * 0.5];
+    nofixTarget = [
+      width * 0.5 + cos(3 * TAU * prog) * prog * height * 0.5, 
+      height * 0.5 + sin(3 * TAU * prog) * prog * height * 0.5
+    ];
     console.log("nofixNofix");
     if (millis() - nofixSwitchTime > nofixNofixLength) {
       nofixSwitchTime = millis();
