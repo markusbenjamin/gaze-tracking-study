@@ -9,7 +9,6 @@ function mean(matrix) {
     }
     for (var i = 0; i < matrix.length; i++) {
         for (var j = 0; j < matrix[i].length; j++) {
-
             if (matrix[i][j] != NaN) {
                 accum[j] += matrix[i][j];
             }
