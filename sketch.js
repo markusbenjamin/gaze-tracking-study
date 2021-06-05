@@ -55,8 +55,8 @@ function windowResized() {
 }
 
 function draw() {
-  fill(1);
-  stroke(0);
+  fill(0);
+  stroke(1);
   rect(width * 0.5, height * 0.5, width, height);
   noFill
   noStroke();
@@ -90,13 +90,13 @@ function showPredictions() {
     ellipse(pogSmooth[0], pogSmooth[1], 20, 20);
     stroke(0.333, 1, 1, 0.1);
     ellipse(pogSmooth[2], pogSmooth[3], 20, 20);
-    stroke(0);
+    stroke(1);
     ellipse((pogSmooth[0] + pogSmooth[2]) / 2, (pogSmooth[1] + pogSmooth[3]) / 2, 20, 20);
     noStroke();
   }
 
   if (fixStatus === "fixation") {
-    stroke(0);
+    stroke(1);
     line(fixPoint[0] - 40, fixPoint[1], fixPoint[0] + 40, fixPoint[1]);
     line(fixPoint[0], fixPoint[1] - 40, fixPoint[0], fixPoint[1] + 40);
     noStroke();
@@ -105,7 +105,7 @@ function showPredictions() {
 
 function showStatus() {
   textSize(20);
-  fill(0);
+  fill(1);
   text(
     "FACE: " + faceStatus +
     "\nCALIBRATION: " + calibEyeString + ", error: " + calibError + " px" +
@@ -140,7 +140,7 @@ function startFixTest() {
 }
 
 function doFixTest() {
-  stroke(0);
+  stroke(1);
   strokeWeight(2);
   line(width * 0.5 - 40, height * 0.5, width * 0.5 + 40, height * 0.5);
   line(width * 0.5, height * 0.5 - 40, width * 0.5, height * 0.5 + 40);
