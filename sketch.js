@@ -251,7 +251,7 @@ function doNofixTest() {
   fixCross(nofixTarget[0], nofixTarget[1], 80);
 
   let newRow = nofixTestData.addRow();
-  newRow.setNum('nofixTestTime', millis() - fixTestStart);
+  newRow.setNum('nofixTestTime', millis() - nofixTestStart);
   newRow.setNum('calibError', calibError);
   newRow.setNum('lpogx', pog[0]);
   newRow.setNum('lpogy', pog[1]);
@@ -277,6 +277,8 @@ function endNofixTest() {
   nofixTest = false;
   nofixFix = false;
   nofixNofix = false;
+
+  saveTable(nofixTestData, 'nofixTestData' + millis() + '.csv');
 }
 
 //misc
