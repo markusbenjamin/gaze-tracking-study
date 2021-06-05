@@ -1,0 +1,53 @@
+<script src="sketch.js"></script>
+
+let WASM_URL;
+    async function loadGazeFilter() {
+      WASM_URL = "./gazefilter.wasm";
+      await gazefilter.init("gazefilter.wasm");
+      await gazefilter.tracker.connect();
+      console.log("2");
+    }
+
+    loadGazeFilter();
+
+    let canvas = document.getElementById("tracker-canvas");
+    gazefilter.visualizer.setCanvas(canvas);
+
+    function render(ctx, trackEvent) {
+      // draw video frame
+      ctx.drawImage(
+        gazefilter.tracker.videoElement(),
+        0, 0, ctx.canvas.width, ctx.canvas.height
+      );
+
+      // set drawing style
+      ctx.strokeStyle = 'white';
+      ctx.fillStyle = 'white';
+      ctx.lineWidth = 2;
+
+      // draw facial landmarks
+      let shapeArray = trackEvent.shapeArrayView();
+      for (let i = 0; i < trackEvent.shapeSize(); i++) {
+        ctx.beginPath();
+        let pointX = shapeArray[i * 2];
+        let pointY = shapeArray[i * 2 + 1];
+        ctx.arc(pointX, pointY, 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // draw pupil center points
+      ctx.strokeStyle = 'red';
+      let [lx, ly, rx, ry] = trackEvent.pupilArray();
+      ctx.beginPath();
+      ctx.arc(lx, ly, 3, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(rx, ry, 3, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    gazefilter.visualizer.setListener("filter", render);
+
+    <canvas id="tracker-canvas"></canvas>
+
+    <script src="gazefilter.js" />
