@@ -47,7 +47,7 @@ function setup() {
 
   gazeSmoothNum = 15;
   fixTest = false;
-  fixTestLength = 5 * 1000;
+  fixTestLength = 60 * 1000;
 }
 
 function windowResized() {
