@@ -1,32 +1,81 @@
+console.log("gaze.js is running");
+
+
+//SHOW WEBCAM CAPTURE & FACIAL LANDMARKS
 //let canvas = document.getElementById("tracker-canvas");
 //gazefilter.visualizer.setCanvas(canvas);
-console.log("aa");
 
-function onmouseclick(event) {
+
+//CALIBRATION
+// enable mouse calibration
+function onmouseclick(clickevent) {
     gazefilter.tracker.calibrate(
-        event.timeStamp,  // relative to performance.timeOrigin
-        event.screenX,  // in pixels
-        event.screenY,  // in pixels
+        clickevent.timeStamp,  // relative to performance.timeOrigin
+        clickevent.screenX,  // in pixels
+        clickevent.screenY,  // in pixels
         1.0  // see note below
     );
 }
 
-function oncalib(response) {
-    console.log("calibration error: ", response.errorValue);
-}
-
-// enable mouse calibration
 window.addEventListener("click", onmouseclick);
 
-// listen calibration process
+// listen to calibration process
+function oncalib(response) {
+    calibErrorString = [
+        "calib acquired",
+        "screen dimensions aren't set",
+        "calib sample cannot be created",
+        "not enough data to fit"
+    ][response.errorCode];
+
+    calibEyeString = [
+        "no eye",
+        "left eye",
+        "right eye",
+        "both eyes"
+    ][response.eye];
+
+    calibError = Math.round(response.errorValue);
+
+    console.log(
+        calibErrorString +
+        "; error: " + calibError + "px" +
+        "; " + calibEyeString
+    );
+}
+
 gazefilter.tracker.addListener("calib", oncalib);
 
-gazefilter.tracker.addListener("filter", event => {
-    fixPointPrediction = event.fixationPoint();
-    pointOfGazePrediction = event.pogArray();
-    if (isNaN(pointOfGazePrediction[0]) == false) {
-        pointOfGazePredictions.push(pointOfGazePrediction);
+
+//TRACKING
+function ontrack(trackevent) {
+    if (trackevent.detected) {
+        faceStatus = "detected";
     }
-    counter++;
-    //console.log(event.timestamp, event.eventType, event.detected, event.bestGazePoint());
-});
+    else {
+        faceStatus = "not detected";
+    }
+
+    trackingStatus = [
+        "no tracked face",
+        "tracked face found",
+        "face tracked",
+        "tracked face lost"
+    ][trackevent.eventType];
+    pog = trackevent.pogArray();
+    if (isNaN(pog[0]) == false) {
+        pogs.push(pog);
+    }
+    bestGazeP = trackevent.bestGazePoint();
+
+    fixPoint = trackevent.fixationPoint();
+    fixDur = Math.round(trackevent.fixationDuration());
+    fixStatus = [
+        "no fixation",
+        "fixation acquired",
+        "fixation",
+        "fixation lost"
+    ][trackevent.fixationEvent()];
+}
+
+gazefilter.tracker.addListener("filter", ontrack);
