@@ -55,7 +55,7 @@ function setup() {
   noFill();
 
   loadGazeFilter();
-  pogSmooth = [-1,-1];
+  pogSmooth = [-1, -1];
 
   gazeSmoothNum = 15;
   fixTest = false;
@@ -99,7 +99,7 @@ function draw() {
 
 
 //tracking
-function calcPogSmooth(){
+function calcPogSmooth() {
   pogSmooth = mean(pogs.slice(-gazeSmoothNum));
 }
 
@@ -233,7 +233,7 @@ function startNofixTest() {
 
 function doNofixTest() {
   if (nofixFix) {
-    nofixTarget = [width * 0.5, height * 0.5];
+    nofixTarget = [1280, 720];//[width * 0.5, height * 0.5];
     console.log("nofixFix");
     if (millis() - nofixSwitchTime > nofixFixLength) {
       nofixSwitchTime = millis();
@@ -244,9 +244,12 @@ function doNofixTest() {
   else if (nofixNofix) {
     var prog = (millis() - nofixTestStart) / nofixTestLength;
     nofixTarget = [
+      1280 + cos(3 * TAU * prog) * prog * 720,
+      720 + sin(3 * TAU * prog) * prog * 720
+    ];/*[
       width * 0.5 + cos(3 * TAU * prog) * prog * height * 0.5, 
       height * 0.5 + sin(3 * TAU * prog) * prog * height * 0.5
-    ];
+    ];*/
     console.log("nofixNofix");
     if (millis() - nofixSwitchTime > nofixNofixLength) {
       nofixSwitchTime = millis();
