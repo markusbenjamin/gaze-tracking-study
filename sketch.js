@@ -210,8 +210,8 @@ function startNofixTest() {
   nofixFix = true;
 
   nofixTestData = new p5.Table();
-  /*nofixTestData.addColumn('nofixTestTime');
-  nofixTestData.addColumn('calibError');
+  nofixTestData.addColumn('nofixTestTime');
+  /*nofixTestData.addColumn('calibError');
   nofixTestData.addColumn('lpogx');
   nofixTestData.addColumn('lpogy');
   nofixTestData.addColumn('rpogx');
