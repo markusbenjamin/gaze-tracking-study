@@ -211,7 +211,7 @@ function startNofixTest() {
 
   nofixTestData = new p5.Table();
   nofixTestData.addColumn('nofixTestTime');
-  /*nofixTestData.addColumn('calibError');
+  nofixTestData.addColumn('calibError');
   nofixTestData.addColumn('lpogx');
   nofixTestData.addColumn('lpogy');
   nofixTestData.addColumn('rpogx');
@@ -223,7 +223,7 @@ function startNofixTest() {
   nofixTestData.addColumn('fixpx');
   nofixTestData.addColumn('fixpy');
   nofixTestData.addColumn('fixdur');
-  nofixTestData.addColumn('fixstatus');*/
+  nofixTestData.addColumn('fixstatus');
   nofixTestData.addColumn('targetx');
   nofixTestData.addColumn('targety');
 
@@ -233,7 +233,7 @@ function startNofixTest() {
 
 function doNofixTest() {
   if (nofixFix) {
-    nofixTarget = [1280, 720];//[width * 0.5, height * 0.5];
+    nofixTarget = [width * 0.5, height * 0.5];
     console.log("nofixFix");
     if (millis() - nofixSwitchTime > nofixFixLength) {
       nofixSwitchTime = millis();
@@ -244,12 +244,9 @@ function doNofixTest() {
   else if (nofixNofix) {
     var prog = (millis() - nofixTestStart) / nofixTestLength;
     nofixTarget = [
-      1280 + cos(3 * TAU * prog) * prog * 720,
-      720 + sin(3 * TAU * prog) * prog * 720
-    ];/*[
       width * 0.5 + cos(3 * TAU * prog) * prog * height * 0.5, 
       height * 0.5 + sin(3 * TAU * prog) * prog * height * 0.5
-    ];*/
+    ];
     console.log("nofixNofix");
     if (millis() - nofixSwitchTime > nofixNofixLength) {
       nofixSwitchTime = millis();
@@ -262,7 +259,7 @@ function doNofixTest() {
 
   let newRow = nofixTestData.addRow();
   newRow.setNum('nofixTestTime', millis() - nofixTestStart);
-  /*newRow.setNum('calibError', calibError);
+  newRow.setNum('calibError', calibError);
   newRow.setNum('lpogx', pog[0]);
   newRow.setNum('lpogy', pog[1]);
   newRow.setNum('rpogx', pog[2]);
@@ -274,7 +271,7 @@ function doNofixTest() {
   newRow.setNum('fixpx', fixPoint[0]);
   newRow.setNum('fixpy', fixPoint[1]);
   newRow.setNum('fixdur', fixDur);
-  newRow.setString('fixstatus', fixStatus);*/
+  newRow.setString('fixstatus', fixStatus);
   newRow.setString('targetx', nofixTarget[0]);
   newRow.setString('targety', nofixTarget[1]);
 
