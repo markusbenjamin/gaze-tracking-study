@@ -147,7 +147,7 @@ function startFixTest() {
 
   fixTestData = new p5.Table();
   fixTestData.addColumn('fixTestTime');
-  fixTestData.addColumn('calibError');
+  /*fixTestData.addColumn('calibError');
   fixTestData.addColumn('lpogx');
   fixTestData.addColumn('lpogy');
   fixTestData.addColumn('rpogx');
@@ -159,7 +159,7 @@ function startFixTest() {
   fixTestData.addColumn('fixpx');
   fixTestData.addColumn('fixpy');
   fixTestData.addColumn('fixdur');
-  fixTestData.addColumn('fixstatus');
+  fixTestData.addColumn('fixstatus');*/
   fixTestData.addColumn('targetx');
   fixTestData.addColumn('targety');
 
@@ -171,7 +171,7 @@ function doFixTest() {
 
   let newRow = fixTestData.addRow();
   newRow.setNum('fixTestTime', millis() - fixTestStart);
-  newRow.setNum('calibError', calibError);
+  /*newRow.setNum('calibError', calibError);
   newRow.setNum('lpogx', pog[0]);
   newRow.setNum('lpogy', pog[1]);
   newRow.setNum('rpogx', pog[2]);
@@ -183,7 +183,7 @@ function doFixTest() {
   newRow.setNum('fixpx', fixPoint[0]);
   newRow.setNum('fixpy', fixPoint[1]);
   newRow.setNum('fixdur', fixDur);
-  newRow.setString('fixstatus', fixStatus);
+  newRow.setString('fixstatus', fixStatus);*/
   newRow.setString('targetx', fixTarget[0]);
   newRow.setString('targety', fixTarget[1]);
 }
@@ -272,8 +272,8 @@ function doNofixTest() {
   newRow.setNum('fixpy', fixPoint[1]);
   newRow.setNum('fixdur', fixDur);
   newRow.setString('fixstatus', fixStatus);
-  newRow.setString('targetx', fixTarget[0]);
-  newRow.setString('targety', fixTarget[1]);
+  newRow.setString('targetx', nofixTarget[0]);
+  newRow.setString('targety', nofixTarget[1]);
 
   if (millis() - nofixTestStart > nofixTestLength) {
     endNofixTest();
