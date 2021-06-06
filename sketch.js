@@ -47,6 +47,12 @@ var nofixTestLength;
 var nofixTestData;
 var nofixTarget;
 
+//discriminator
+var discriminatorOn;
+var discStatus;
+var discDist;
+var discTime;
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
   colorMode(HSB, 1);
@@ -69,6 +75,10 @@ function setup() {
   nofixFixLength = 5 * 1000;
   nofixNofixLength = 10 * 1000;
   nofixTarget = [width * 0.5, height * 0.5];
+
+  discriminatorOn = false;
+  discDist = 200;
+  discTime = 10;
 }
 
 function windowResized() {
@@ -94,6 +104,32 @@ function draw() {
   else {
     showPredictions();
     showStatus();
+  }
+
+  if (discriminatorOn) {
+    stroke(1);
+    ellipse(fixTarget[0], fixTarget[1], 2 * discDist, 2 * discDist)
+    noStroke();
+    var discResult = discriminate(bestGazeP, fixTarget);
+    if (discResult == -1) {
+      fill(0.55, 1, 1);
+    }
+    else {
+      if (discResult == 0) {
+        discStatus = 0;
+      }
+      else {
+        discStatus += discResult;
+      }
+      if (discStatus > discTime) {
+        fill(1, 1, 1);
+      }
+      else {
+        fill(0.33, 1, 1);
+      }
+    }
+    rect(width * 0.5, height * 0.5, 100, 100);
+    noFill();
   }
 }
 
@@ -202,6 +238,30 @@ function keyPressed() {
   if (key == 'n' || key == 'N') {
     startNofixTest();
   }
+
+  if (key == 'd' || key == 'D') {
+    discriminatorOn = !discriminatorOn;
+    if (discriminatorOn) {
+      startDiscriminator();
+    }
+  }
+}
+
+//discriminator
+function startDiscriminator() {
+  discStatus = -1;
+}
+
+function discriminate(gaze, target) {
+  if (isNaN(gaze[0])) {
+    return -1;
+  }
+  else if (dist(gaze[0], gaze[1], target[0], target[1]) > discDist) {
+    return 1;
+  }
+  else {
+    return 0;
+  }
 }
 
 //nofixtest
@@ -244,7 +304,7 @@ function doNofixTest() {
   else if (nofixNofix) {
     var prog = (millis() - nofixTestStart) / nofixTestLength;
     nofixTarget = [
-      width * 0.5 + cos(3 * TAU * prog) * prog * height * 0.5, 
+      width * 0.5 + cos(3 * TAU * prog) * prog * height * 0.5,
       height * 0.5 + sin(3 * TAU * prog) * prog * height * 0.5
     ];
     console.log("nofixNofix");
