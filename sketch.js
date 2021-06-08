@@ -30,13 +30,6 @@ var gazeSmoothNum;
 var pogs = [];
 var pogSmooth;
 
-//fixtest vars
-var fixTest;
-var fixTestStart;
-var fixTestLength;
-var fixTestData;
-var fixTarget;
-
 //nofixtest vars
 var nofixTest;
 var nofixFix;
@@ -48,10 +41,10 @@ var nofixTestData;
 var nofixTarget;
 
 //discriminator
-var discriminatorOn;
-var discStatus;
-var discDist;
-var discTime;
+var discrOn;
+var discrDist;
+var discrTime;
+var discrCounter;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -64,21 +57,19 @@ function setup() {
   pogSmooth = [-1, -1];
 
   gazeSmoothNum = 15;
-  fixTest = false;
-  fixTestLength = 60 * 1000;
-  fixTarget = [width * 0.5, height * 0.5];
 
   nofixTest = false;
   nofixFix = false;
   nofixNofix = false;
-  nofixTestLength = 120 * 1000;
+  nofixTestLength = 240 * 1000;
   nofixFixLength = 5 * 1000;
-  nofixNofixLength = 10 * 1000;
+  nofixNofixLength = 5 * 1000;
   nofixTarget = [width * 0.5, height * 0.5];
 
-  discriminatorOn = false;
-  discDist = 200;
-  discTime = 10;
+  discrOn = false;
+  discrDist = 200;
+  discrTime = 10;
+  discrCounter = 0;
 }
 
 function windowResized() {
@@ -92,44 +83,12 @@ function draw() {
   noFill
   noStroke();
 
-  if (fixTest) {
-    doFixTest();
-    if (millis() - fixTestStart > fixTestLength) {
-      endFixTest();
-    }
-  }
-  else if (nofixTest) {
+  if (nofixTest) {
     doNofixTest();
   }
   else {
     showPredictions();
     showStatus();
-  }
-
-  if (discriminatorOn) {
-    stroke(1);
-    ellipse(fixTarget[0], fixTarget[1], 2 * discDist, 2 * discDist)
-    noStroke();
-    var discResult = discriminate(bestGazeP, fixTarget);
-    if (discResult == -1) {
-      fill(0.55, 1, 1);
-    }
-    else {
-      if (discResult == 0) {
-        discStatus = 0;
-      }
-      else {
-        discStatus += discResult;
-      }
-      if (discStatus > discTime) {
-        fill(1, 1, 1);
-      }
-      else {
-        fill(0.33, 1, 1);
-      }
-    }
-    rect(width * 0.5, height * 0.5, 100, 100);
-    noFill();
   }
 }
 
@@ -177,90 +136,13 @@ function showStatus() {
   noFill();
 }
 
-//fixtest
-function startFixTest() {
-  fixTest = true;
-
-  fixTestData = new p5.Table();
-  fixTestData.addColumn('fixTestTime');
-  fixTestData.addColumn('calibError');
-  fixTestData.addColumn('lpogx');
-  fixTestData.addColumn('lpogy');
-  fixTestData.addColumn('rpogx');
-  fixTestData.addColumn('rpogy');
-  fixTestData.addColumn('smoothpogx');
-  fixTestData.addColumn('smoothpogy');
-  fixTestData.addColumn('bestpogx');
-  fixTestData.addColumn('bestpogy');
-  fixTestData.addColumn('fixpx');
-  fixTestData.addColumn('fixpy');
-  fixTestData.addColumn('fixdur');
-  fixTestData.addColumn('fixstatus');
-  fixTestData.addColumn('targetx');
-  fixTestData.addColumn('targety');
-
-  fixTestStart = millis();
-}
-
-function doFixTest() {
-  fixCross(width * 0.5, height * 0.5, 80);
-
-  let newRow = fixTestData.addRow();
-  newRow.setNum('fixTestTime', millis() - fixTestStart);
-  newRow.setNum('calibError', calibError);
-  newRow.setNum('lpogx', pog[0]);
-  newRow.setNum('lpogy', pog[1]);
-  newRow.setNum('rpogx', pog[2]);
-  newRow.setNum('rpogy', pog[3]);
-  newRow.setNum('smoothpogx', pogSmooth[0]);
-  newRow.setNum('smoothpogy', pogSmooth[1]);
-  newRow.setNum('bestpogx', bestGazeP[0]);
-  newRow.setNum('bestpogy', bestGazeP[1]);
-  newRow.setNum('fixpx', fixPoint[0]);
-  newRow.setNum('fixpy', fixPoint[1]);
-  newRow.setNum('fixdur', fixDur);
-  newRow.setString('fixstatus', fixStatus);
-  newRow.setString('targetx', fixTarget[0]);
-  newRow.setString('targety', fixTarget[1]);
-}
-
-function endFixTest() {
-  fixTest = false;
-
-  saveTable(fixTestData, 'fixTestData' + millis() + '.csv');
-}
-
 function keyPressed() {
-  if (key == 'f' || key == 'F') {
-    startFixTest();
-  }
-
   if (key == 'n' || key == 'N') {
     startNofixTest();
   }
 
   if (key == 'd' || key == 'D') {
     discriminatorOn = !discriminatorOn;
-    if (discriminatorOn) {
-      startDiscriminator();
-    }
-  }
-}
-
-//discriminator
-function startDiscriminator() {
-  discStatus = -1;
-}
-
-function discriminate(gaze, target) {
-  if (isNaN(gaze[0])) {
-    return -1;
-  }
-  else if (dist(gaze[0], gaze[1], target[0], target[1]) > discDist) {
-    return 1;
-  }
-  else {
-    return 0;
   }
 }
 
@@ -276,8 +158,6 @@ function startNofixTest() {
   nofixTestData.addColumn('lpogy');
   nofixTestData.addColumn('rpogx');
   nofixTestData.addColumn('rpogy');
-  nofixTestData.addColumn('smoothpogx');
-  nofixTestData.addColumn('smoothpogy');
   nofixTestData.addColumn('bestpogx');
   nofixTestData.addColumn('bestpogy');
   nofixTestData.addColumn('fixpx');
@@ -286,6 +166,9 @@ function startNofixTest() {
   nofixTestData.addColumn('fixstatus');
   nofixTestData.addColumn('targetx');
   nofixTestData.addColumn('targety');
+
+  nofixPhi = 0;
+  nofixR = 0;
 
   nofixTestStart = millis();
   nofixSwitchTime = nofixTestStart;
@@ -296,22 +179,32 @@ function doNofixTest() {
     nofixTarget = [width * 0.5, height * 0.5];
     console.log("nofixFix");
     if (millis() - nofixSwitchTime > nofixFixLength) {
-      nofixSwitchTime = millis();
       nofixFix = false;
       nofixNofix = true;
+      var nofixR = random(height * 0.5);
+      var nofixPhi = random(TAU);
+      nofixTarget = [
+        width * 0.5 + cos(nofixPhi) * nofixR,
+        height * 0.5 + sin(nofixPhi) * nofixR
+      ];
+      nofixSwitchTime = millis();
     }
   }
   else if (nofixNofix) {
+    /*
     var prog = (millis() - nofixTestStart) / nofixTestLength;
     nofixTarget = [
       width * 0.5 + cos(3 * TAU * prog) * prog * height * 0.5,
       height * 0.5 + sin(3 * TAU * prog) * prog * height * 0.5
     ];
+    */
+
     console.log("nofixNofix");
     if (millis() - nofixSwitchTime > nofixNofixLength) {
-      nofixSwitchTime = millis();
       nofixNofix = false;
       nofixFix = true;
+      nofixTarget = [width * 0.5, height * 0.5];
+      nofixSwitchTime = millis();
     }
   }
 
@@ -324,8 +217,6 @@ function doNofixTest() {
   newRow.setNum('lpogy', pog[1]);
   newRow.setNum('rpogx', pog[2]);
   newRow.setNum('rpogy', pog[3]);
-  newRow.setNum('smoothpogx', pogSmooth[0]);
-  newRow.setNum('smoothpogy', pogSmooth[1]);
   newRow.setNum('bestpogx', bestGazeP[0]);
   newRow.setNum('bestpogy', bestGazeP[1]);
   newRow.setNum('fixpx', fixPoint[0]);
