@@ -84,14 +84,6 @@ function draw() {
   noFill
   noStroke();
 
-  if (nofixTest) {
-    doNofixTest();
-  }
-  else {
-    showPredictions();
-    showStatus();
-  }
-
   if (discrOn) {
     runDiscriminator();
     stroke(1);
@@ -108,6 +100,14 @@ function draw() {
     }
     rect(width * 0.5, height * 0.5, 100, 100);
     noFill();
+  }
+
+  if (nofixTest) {
+    doNofixTest();
+  }
+  else {
+    showPredictions();
+    showStatus();
   }
 }
 
