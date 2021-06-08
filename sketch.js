@@ -44,7 +44,9 @@ var nofixTarget;
 var discrOn;
 var discrDist;
 var discrTime;
-var discrCounter;
+var discrChangeTime;
+var discrJudgement;
+var discrStatus;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -61,15 +63,14 @@ function setup() {
   nofixTest = false;
   nofixFix = false;
   nofixNofix = false;
-  nofixTestLength = 240 * 1000;
-  nofixFixLength = 5 * 1000;
-  nofixNofixLength = 5 * 1000;
+  nofixTestLength = 400 * 1000;
+  nofixFixLength = 0 * 1000;
+  nofixNofixLength = 2 * 1000;
   nofixTarget = [width * 0.5, height * 0.5];
 
   discrOn = false;
-  discrDist = 200;
+  discrDist = 300;
   discrTime = 10;
-  discrCounter = 0;
 }
 
 function windowResized() {
@@ -90,8 +91,59 @@ function draw() {
     showPredictions();
     showStatus();
   }
+
+  if (discrOn) {
+    stroke(1);
+    ellipse(width * 0.5, height * 0.5, discrDist * 2, discrDist * 2);
+    noStroke();
+    if (discrStatus == 1) {
+      fill(1, 1, 1);
+    }
+    else if (discrStatus == 0) {
+      fill(0.33, 1, 1);
+    }
+    else {
+      fill(0.55, 1, 1);
+    }
+    rect(width * 0.5, height * 0.5, 100, 100);
+    noFill();
+  }
 }
 
+function keyPressed() {
+  if (key == 'n' || key == 'N') {
+    startNofixTest();
+  }
+
+  if (key == 'd' || key == 'D') {
+    discrOn = !discrOn;
+
+    if (discrOn) {
+      startDiscriminator();
+    }
+  }
+}
+
+//discrimination
+function startDiscriminator() {
+  discrChangeTime = 0;
+  discrJudgement = 0;
+  discrStatus = 0;
+}
+
+function runDiscriminator() {
+  if (bestGazeP == undefined) {
+    discrStatus = -1;
+  }
+  else {
+    if (discrDist < dist(bestGazeP[0], bestGazeP[1], width * 0.5, height * 0.5)) {
+      discrJudgement = 1;
+    }
+    if (discrJudgement == 1) {
+      discrStatus = 1;
+    }
+  }
+}
 
 //tracking
 function calcPogSmooth() {
@@ -134,16 +186,6 @@ function showStatus() {
     "\nFIXATION: " + fixStatus + ", duration: " + fixDur / 1000 + " s"
     , width * 0.015, height * 0.05);
   noFill();
-}
-
-function keyPressed() {
-  if (key == 'n' || key == 'N') {
-    startNofixTest();
-  }
-
-  if (key == 'd' || key == 'D') {
-    discriminatorOn = !discriminatorOn;
-  }
 }
 
 //nofixtest
