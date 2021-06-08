@@ -70,7 +70,7 @@ function setup() {
 
   discrOn = false;
   discrDist = 300;
-  discrTime = 10;
+  discrTime = 400;
 }
 
 function windowResized() {
@@ -93,13 +93,14 @@ function draw() {
   }
 
   if (discrOn) {
+    runDiscriminator();
     stroke(1);
     ellipse(width * 0.5, height * 0.5, discrDist * 2, discrDist * 2);
     noStroke();
-    if (discrStatus == 1) {
+    if (discrJudgement == 1) {
       fill(1, 1, 1);
     }
-    else if (discrStatus == 0) {
+    else if (discrJudgement == 0) {
       fill(0.33, 1, 1);
     }
     else {
@@ -127,21 +128,35 @@ function keyPressed() {
 //discrimination
 function startDiscriminator() {
   discrChangeTime = 0;
-  discrJudgement = 0;
   discrStatus = 0;
+  
+  discrJudgement = 0;
 }
 
 function runDiscriminator() {
-  if (bestGazeP == undefined) {
+  if (isNaN(bestGazeP[0])) {
     discrStatus = -1;
+    discrJudgement = -1;
   }
   else {
-    if (discrDist < dist(bestGazeP[0], bestGazeP[1], width * 0.5, height * 0.5)) {
-      discrJudgement = 1;
-    }
-    if (discrJudgement == 1) {
+    if (discrDist < dist(bestGazeP[0],bestGazeP[1], width * 0.5, height * 0.5)) {
+      if(discrStatus == 0){
+        discrChangeTime = millis();
+      }
       discrStatus = 1;
     }
+    else{
+      discrStatus = 0;
+    }
+
+    if(discrStatus == 1 && discrTime<millis()-discrChangeTime){
+      discrJudgement = 1;
+    }
+    else{
+      discrJudgement = 0;
+    }
+
+    //console.log(millis()-discrChangeTime+'\t'+discrStatus+'\t'+discrJudgement);
   }
 }
 
