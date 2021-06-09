@@ -100,7 +100,12 @@ function draw() {
       fill(0.55, 1, 1);
     }
     rect(width * 0.5, height * 0.5, 100, 100);
+    fill(1);
+    textAlign(CENTER);
+    textSize(50);
+    text('\t'+discrStatus+'\t'+discrJudgement+'\n'+discrStatus*round(millis()-discrChangeTime),width*0.5,height*0.1);
     noFill();
+    textAlign(LEFT);
   }
 
   if (nofixTest) {
