@@ -140,7 +140,7 @@ function runDiscriminator() {
     discrJudgement = -1;
   }
   else {
-    var smoothPog = getSmoothPog(round(getFrameRate()*800/1000*discrSmoothTime));
+    var smoothPog = getSmoothPog(round(getFrameRate()*discrSmoothTime/1000));
     if (discrDist < dist(smoothPog[0],smoothPog[1], width * 0.5, height * 0.5)) {
       if(discrStatus == 0){
         discrChangeTime = millis();
