@@ -43,7 +43,7 @@ var nofixTarget;
 //discriminator
 var discrOn;
 var discrDist;
-var discrTime;
+var discrAwayTime;
 var discrChangeTime;
 var discrJudgement;
 var discrStatus;
@@ -70,7 +70,8 @@ function setup() {
 
   discrOn = false;
   discrDist = 300;
-  discrTime = 60;
+  discrAwayTime = 60;
+  discrSmoothTime = 800;
 }
 
 function windowResized() {
@@ -139,7 +140,8 @@ function runDiscriminator() {
     discrJudgement = -1;
   }
   else {
-    if (discrDist < dist(bestGazeP[0],bestGazeP[1], width * 0.5, height * 0.5)) {
+    var smoothPog = getSmoothPog(round(getFrameRate()*800/1000*discrSmoothTime));
+    if (discrDist < dist(smoothPog[0],smoothPog[1], width * 0.5, height * 0.5)) {
       if(discrStatus == 0){
         discrChangeTime = millis();
       }
@@ -149,7 +151,7 @@ function runDiscriminator() {
       discrStatus = 0;
     }
 
-    if(discrStatus == 1 && discrTime<millis()-discrChangeTime){
+    if(discrStatus == 1 && discrAwayTime<millis()-discrChangeTime){
       discrJudgement = 1;
     }
     else{
@@ -163,6 +165,11 @@ function runDiscriminator() {
 //tracking
 function calcPogSmooth() {
   pogSmooth = mean(pogs.slice(-gazeSmoothNum));
+}
+
+function getSmoothPog(n) {
+  var twoEyesSmooth = mean(pogs.slice(-n));
+  return [(twoEyesSmooth[0]+twoEyesSmooth[2])/2,(twoEyesSmooth[1]+twoEyesSmooth[3])/2]
 }
 
 function showPredictions() {
