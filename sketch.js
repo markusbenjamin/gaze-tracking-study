@@ -70,7 +70,7 @@ function setup() {
 
   discrOn = false;
   discrDist = 300;
-  discrTime = 400;
+  discrTime = 800;
 }
 
 function windowResized() {
